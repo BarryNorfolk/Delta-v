@@ -3,6 +3,7 @@
   name: loadout-group-blueshield-backpack
   loadouts:
   - BlueShieldBackpack
+  - BlueShieldSatchel
   - BlueShieldDuffel
 
 - type: loadoutGroup
@@ -11,3 +12,5 @@
   loadouts:
   - BlueShieldJumpsuit
   - BlueShieldJumpskirt
+  - EliteBlueShieldJumpsuit
+  - EliteBlueShieldJumpskirt

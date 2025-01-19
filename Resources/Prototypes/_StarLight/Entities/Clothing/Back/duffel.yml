@@ -1,7 +1,8 @@
 - type: entity
-  parent: ClothingBackpackDuffel
+  parent: [ClothingBackpackDuffel, BaseCommandContraband]
   id: ClothingBackpackDuffelBlueShield
   name: blueshield's duffel bag
+  description: The bag for a Blueshield ready for any contingency.
   components:
   - type: Sprite
     sprite: _Starlight/Clothing/Back/Duffels/blueshield.rsi

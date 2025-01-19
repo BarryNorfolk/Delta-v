@@ -1,5 +1,5 @@
 - type: entity
-  parent: ClothingEyesBase
+  parent: [ClothingEyesBase, BaseCommandContraband]
   id: ClothingEyesGlassesBlueShield
   name: blueshield officer's glasses
   description: The innovative blue lenses hide your eyes from light flashes and have a built-in visor.
