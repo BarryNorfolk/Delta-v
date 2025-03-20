@@ -5,6 +5,7 @@ using Robust.Shared.Physics.Systems;
 using Robust.Shared.Timing;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
+using Content.Server._DV.Machines.EntitySystems;
 
 namespace Content.Server.ParticleAccelerator.EntitySystems;
 
@@ -20,6 +21,7 @@ public sealed partial class ParticleAcceleratorSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
     [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly MapSystem _mapSystem = default!;
+    [Dependency] private readonly MultipartMachineSystem _multipartMachine = default!;
 
     public override void Initialize()
     {

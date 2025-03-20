@@ -27,7 +27,26 @@
     layoutId: ParticleAccelerator
   - type: AccessReader
     access: [["Engineering"]]
-
+  - type: MultipartMachine
+    parts:
+      - name: EndCap
+        component: ParticleAcceleratorEndCap
+        offset: -1, -1
+      - name: FuelChamber
+        component: ParticleAcceleratorFuelChamber
+        offset: 0, -1
+      - name: PowerBox
+        component: ParticleAcceleratorPowerBox
+        offset: 1, -1
+      - name: PortEmitter
+        component: ParticleAcceleratorEmitter
+        offset: 2, 0
+      - name: ForeEmitter
+        component: ParticleAcceleratorEmitter
+        offset: 2, -1
+      - name: StarboardEmitter
+        component: ParticleAcceleratorEmitter
+        offset: 2, -2
 # Unfinished
 
 - type: entity
