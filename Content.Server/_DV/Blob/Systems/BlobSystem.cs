@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Server.Actions;
 using Content.Server.NodeContainer.EntitySystems;
@@ -5,6 +6,7 @@ using Content.Shared._DV.Blob;
 using Content.Shared._DV.Blob.Components;
 using Content.Shared._DV.Blob.Systems;
 using Content.Shared.NodeContainer;
+using Content.Shared.NodeContainer.NodeGroups;
 
 namespace Content.Server._DV.Blob.Systems;
 
@@ -41,17 +43,29 @@ public sealed class BlobSystem : SharedBlobSystem
         AddEnergy((args.Core, comp), producer.Comp.EnergyPerPulse);
     }
 
+    private bool GetCoreNodes(Entity<BlobComponent> blob, [NotNullWhen(true)] out INodeGroup? nodeGroup)
+    {
+        nodeGroup = null;
+
+        if (!TryComp<NodeContainerComponent>(blob, out var nodeComp))
+            return false;
+
+        if (!_nodeContainer.TryGetNode<BlobNode>(nodeComp, _blobNodeID, out var coreNode))
+            return false;
+
+        if (coreNode.NodeGroup == null)
+            return false; // Core is alone and cannot do anything
+
+        nodeGroup = coreNode.NodeGroup;
+        return true;
+    }
+
     protected override void PulseNetwork(Entity<BlobComponent> blob)
     {
         base.PulseNetwork(blob);
 
-        if (!_nodeContainer.TryGetNode<BlobNode>(
-            EntityManager.GetComponent<NodeContainerComponent>(blob), _blobNodeID, out var coreNode))
+        if (!GetCoreNodes(blob, out var coreNodeGroup))
             return;
-
-        var coreNodeGroup = coreNode.NodeGroup;
-        if (coreNodeGroup == null)
-            return; // Core is alone and cannot pulse anything
 
         // TODO(Barry): Store this query so it's re-used
         var query = EntityQueryEnumerator<BlobPulseReceiverComponent>();
