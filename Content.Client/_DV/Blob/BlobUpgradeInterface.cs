@@ -1,4 +1,5 @@
 using Content.Client.UserInterface.Controls;
+using Content.Shared._DV.Blob;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
 using Robust.Shared.Utility;
@@ -8,9 +9,6 @@ namespace Content.Client._DV.Blob;
 [UsedImplicitly]
 public sealed class BlobUpgradeInterface : BoundUserInterface
 {
-    // TODO(Barry): Figure this data part out
-    private sealed class BaseBlobUpgrade;
-
     private SimpleRadialMenu? _menu = null;
 
     public BlobUpgradeInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
@@ -22,16 +20,23 @@ public sealed class BlobUpgradeInterface : BoundUserInterface
     {
         base.Open();
 
-        var ev = new GetBlobUpgradesEvent(Owner);
-        EntMan.EventBus.RaiseLocalEvent(Owner, ref ev);
-
         _menu = this.CreateWindow<SimpleRadialMenu>();
         _menu.Track(Owner);
-
-        var models = ConvertToButtons(ev.Upgrades);
-        _menu!.SetButtons(models);
-
         _menu.OpenOverMouseScreenPosition();
+    }
+
+    protected override void UpdateState(BoundUserInterfaceState state)
+    {
+        base.UpdateState(state);
+
+        if (_menu == null)
+            return;
+
+        if (state is not BlobUpgradeOptionsState cast)
+            return;
+
+        var models = ConvertToButtons(cast.Upgrades);
+        _menu!.SetButtons(models);
     }
 
     private IEnumerable<RadialMenuOptionBase> ConvertToButtons(IReadOnlyList<BlobUpgradeRadial> allowedUpgrades)
@@ -41,7 +46,7 @@ public sealed class BlobUpgradeInterface : BoundUserInterface
         foreach (var upgrade in allowedUpgrades)
         {
             var groupModels = groupedUpgrades.GetOrNew(upgrade.Category);
-            groupModels!.Add(new RadialMenuActionOption<BaseBlobUpgrade>(HandleRadialMenuClick, new BaseBlobUpgrade())
+            groupModels.Add(new RadialMenuActionOption<BlobUpgradeRadial>(HandleRadialMenuClick, upgrade)
             {
                 IconSpecifier = RadialMenuIconSpecifier.With(upgrade.Sprite),
                 ToolTip = upgrade.Tooltip
@@ -60,8 +65,8 @@ public sealed class BlobUpgradeInterface : BoundUserInterface
         return models;
     }
 
-    private void HandleRadialMenuClick(BaseBlobUpgrade p)
+    private void HandleRadialMenuClick(BlobUpgradeRadial p)
     {
-
+        SendMessage(new BlobUpgradeMessage(p.Prototype));
     }
 }

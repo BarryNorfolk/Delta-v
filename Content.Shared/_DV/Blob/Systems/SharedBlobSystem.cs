@@ -3,6 +3,7 @@ using Content.Shared._DV.Actions;
 using Content.Shared._DV.Blob.Components;
 using Content.Shared.NodeContainer;
 using Content.Shared.Popups;
+using Content.Shared.Whitelist;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
@@ -28,10 +29,9 @@ public abstract class SharedBlobSystem : EntitySystem
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedUserInterfaceSystem _bui = default!;
     [Dependency] protected readonly IPrototypeManager PrototypeManager = default!;
+    [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
 
     private readonly EntProtoId _blobNode = "BlobNode";
-
-    protected HashSet<ProtoId<BlobUpgradePrototype>> AvailableUpgrades = new();
 
     // Frustrating that this is not available easily, we only have ALL directions.
     protected readonly Direction[] CardinalDirections = [
@@ -48,12 +48,8 @@ public abstract class SharedBlobSystem : EntitySystem
         SubscribeLocalEvent<BlobComponent, EventBlobCreateNode>(OnCreateNode);
         SubscribeLocalEvent<BlobComponent, EventBlobUpgradeNode>(OnUpgradeAction);
 
-        foreach (var prototype in PrototypeManager.EnumeratePrototypes<BlobUpgradePrototype>())
-        {
-            // TODO(Barry): Does it even make sense to cache these here?
-            //              Is the enumeration here costly enough that we need to?
-            AvailableUpgrades.Add(prototype.ID);
-        }
+        SubscribeLocalEvent<BlobNodeComponent, GetBlobUpgradesEvent>(OnGetBlobUpgrades);
+        SubscribeLocalEvent<BlobNodeComponent, BlobUpgradeMessage>(OnUpgradeBlobNode);
     }
 
     protected void AddEnergy(Entity<BlobComponent> blob, int amount)
@@ -105,8 +101,47 @@ public abstract class SharedBlobSystem : EntitySystem
             return;
         args.Handled = true;
 
+        var ev = new GetBlobUpgradesEvent(args.Target);
+        RaiseLocalEvent(blob, ref ev);
+
+        if (ev.Upgrades.Count == 0)
+        {
+            // No upgrades available for this particular node, nothing to do.
+            Popup.PopupClient(Loc.GetString("blob-action-upgrade-none-available"), blob);
+            return;
+        }
+
         _bui.TryToggleUi(args.Target, BlobUiKey.Key, actor.PlayerSession);
+        _bui.SetUiState(args.Target, BlobUiKey.Key, new BlobUpgradeOptionsState(ev.Upgrades));
     }
+
+    private void OnGetBlobUpgrades(Entity<BlobNodeComponent> blob, ref GetBlobUpgradesEvent args)
+    {
+        foreach (var proto in PrototypeManager.EnumeratePrototypes<BlobUpgradePrototype>())
+        {
+            if (_entityWhitelist.IsWhitelistFailOrNull(proto.AllowedFrom, args.Target))
+                continue;
+
+            args.Upgrades.Add(
+                new BlobUpgradeRadial
+                (
+                    proto.Category,
+                    proto.Tooltip,
+                    proto.Sprite,
+                    proto.Creates
+                )
+            );
+        }
+    }
+
+    private void OnUpgradeBlobNode(Entity<BlobNodeComponent> node, ref BlobUpgradeMessage args)
+    {
+        // TODO (Barry): This is probably overly simple and needs work
+        var transform = Transform(node);
+        Spawn(args.ProtoId, transform.Coordinates);
+        QueueDel(node);
+    }
+
     private bool TrySpawnNode(Entity<BlobComponent> blob, EntityCoordinates coords)
     {
         // TODO(Barry): Check whether this is a valid place to put a tile.
