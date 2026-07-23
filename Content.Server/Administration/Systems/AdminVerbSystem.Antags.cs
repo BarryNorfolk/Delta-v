@@ -17,6 +17,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using Content.Shared.Roles.Components;
+using Robust.Shared.Map;
 
 namespace Content.Server.Administration.Systems;
 
@@ -271,9 +272,18 @@ public sealed partial class AdminVerbSystem
             Icon = new SpriteSpecifier.Rsi(new ResPath("/Textures/Interface/Misc/job_icons.rsi"), "Nanotrasen"), // TODO(Barry): Make a job icon
             Act = () =>
             {
-                // TODO(Barry): Perhaps here we should be making the new body for the antag since we're converting
-                // an entity INTO the overmind.
+                var originalEntity = targetPlayer.AttachedEntity!.Value;
+
+                // Spawn a new blob core at the location of the player
+                var coords = Transform(originalEntity).Coordinates;
+                var core = SpawnAtPosition("BlobAntagCore", coords.AlignWithClosestGridTile()); // TODO(Barry): Make the prototype not be a literal
+                _mindSystem.ControlMob(targetPlayer.UserId, core);
+
+                // Make it the actual antag.
                 _antag.ForceMakeAntag<BlobAntagRuleComponent>(targetPlayer, "BlobAntagRule");
+
+                // Clean up the original entity now that we don't need it.
+                QueueDel(originalEntity);
             },
             Impact = LogImpact.High,
             Message = string.Join(": ", blobName, Loc.GetString("admin-verb-text-make-Blob")),
