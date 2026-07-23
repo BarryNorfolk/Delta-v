@@ -117,12 +117,14 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         var query = EntityQueryEnumerator<BlobAntagComponent>();
         while (query.MoveNext(out var blob, out var comp))
         {
-            if (comp.NextUpdate > now)
+            if (comp.NextBlobPulse > now)
                 continue;
 
-            comp.NextUpdate = now + TimeSpan.FromSeconds(1);
-
+            comp.NextBlobPulse = now + comp.BlobPulseDelay;
             AddEnergy((blob, comp), comp.EnergyPerSecond);
+
+            // Spread out from the core if able
+            // Then pulse any special nodes on the network
         }
     }
 }

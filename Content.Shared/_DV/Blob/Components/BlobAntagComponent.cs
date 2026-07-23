@@ -28,5 +28,8 @@ public sealed partial class BlobAntagComponent : Component
     public int EnergyPerSecond = 1;
 
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer))]
-    public TimeSpan NextUpdate = TimeSpan.Zero;
+    public TimeSpan NextBlobPulse = TimeSpan.Zero;
+
+    [DataField]
+    public TimeSpan BlobPulseDelay = TimeSpan.FromSeconds(1);
 }
