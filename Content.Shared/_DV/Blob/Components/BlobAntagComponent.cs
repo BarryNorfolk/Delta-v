@@ -7,6 +7,7 @@ namespace Content.Shared._DV.Blob.Components;
 
 [RegisterComponent, NetworkedComponent]
 [Access(typeof(SharedBlobAntagSystem))]
+[AutoGenerateComponentState]
 public sealed partial class BlobAntagComponent : Component
 {
     [DataField]
@@ -17,14 +18,14 @@ public sealed partial class BlobAntagComponent : Component
     [DataField]
     public HashSet<EntityUid?> ActionEntities = [];
 
-    [DataField]
-    public float Energy = 60;
+    [DataField, AutoNetworkedField]
+    public int Energy = 60;
 
     [DataField]
-    public float MaxEnergy = 480;
+    public int MaxEnergy = 480;
 
     [DataField]
-    public float EnergyPerSecond = 1;
+    public int EnergyPerSecond = 1;
 
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer))]
     public TimeSpan NextUpdate = TimeSpan.Zero;
