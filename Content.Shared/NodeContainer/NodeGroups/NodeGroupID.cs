@@ -18,5 +18,5 @@ public enum NodeGroupID : byte
     Teg,
     ExCable,
 
-    BlobAntag // DeltaV
+    Blob // DeltaV
 }

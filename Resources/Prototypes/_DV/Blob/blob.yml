@@ -1,15 +1,15 @@
 # The base for any node in the Blob's network
 - type: entity
-  id: BlobAntagNodeBase
+  id: BlobNodeBase
   parent: BaseStructure
   abstract: true
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
-  - type: BlobAntagNode
+  - type: BlobNode
   - type: UserInterface
     interfaces:
-      enum.BlobAntagUiKey.Key:
-        type: BlobAntagUpgradeInterface
+      enum.BlobUiKey.Key:
+        type: BlobUpgradeInterface
   - type: Sprite
     sprite: _DV/Mobs/Blob/blob.rsi
     layers:
@@ -26,7 +26,7 @@
         - MachineLayer
         density: 200
   - type: Damageable
-    damageModifierSet: BlobAntag
+    damageModifierSet: Blob
   - type: Destructible
     thresholds:
     - trigger:
@@ -59,26 +59,26 @@
         Piercing: 10
   - type: NodeContainer
     nodes:
-      blob: !type:BlobAntagNode
-        nodeGroupID: BlobAntag
+      blob: !type:BlobNode
+        nodeGroupID: Blob
         needAnchored: false
 
 # A regular node on the blob network
 - type: entity
-  id: BlobAntagNode
+  id: BlobNode
   name: Blob Node
   description: A part of the blob, it looks eerily comfy...
-  parent: BlobAntagNodeBase
+  parent: BlobNodeBase
   categories: [ DoNotMap ]
   components:
-  - type: BlobAntagSimpleNode
+  - type: BlobSimpleNode
 
 # A node on the network that generates resources
 - type: entity
-  id: BlobAntagResourceNode
+  id: BlobResourceNode
   name: Blob Resource Node
   description: A hardworking, white collar resource node...
-  parent: BlobAntagNodeBase
+  parent: BlobNodeBase
   categories: [ DoNotMap ]
   components:
   - type: Sprite
@@ -89,13 +89,13 @@
 
 # The core node that will house the overmind/player
 - type: entity
-  id: BlobAntagCore
-  parent: BlobAntagNodeBase
+  id: BlobCore
+  parent: BlobNodeBase
   name: Blob Core
   description: The core of the blob, it pulstates with the power of a thousand moons...
   categories: [ DoNotMap ]
   components:
-  - type: BlobAntag
+  - type: Blob
   - type: Sprite
     sprite: _DV/Mobs/Blob/blob.rsi
     layers:
@@ -109,7 +109,7 @@
   - type: BlockMovement
     blockInteraction: false
   - type: StartingMindRole
-    mindRole: "MindRoleBlobAntag"
+    mindRole: "MindRoleBlob"
     silent: true
 
 # Projection that the overmind can use to move around with
@@ -117,7 +117,7 @@
   parent:
   - Incorporeal
   - BaseMob
-  id: BlobAntagOvermindEye
+  id: BlobOvermindEye
   name: Blob Overmind
   description: The eye of the Blob
   categories: [ HideSpawnMenu, DoNotMap ]

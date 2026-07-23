@@ -1,9 +1,9 @@
 # TODO(Barry): Move this to midround
 - type: entity
   parent: BaseGameRule
-  id: BlobAntagRule
+  id: BlobRule
   components:
-  - type: BlobAntagRule
+  - type: BlobRule
   - type: GameRule
     minPlayers: 15
     minTotalPlayers: 40
@@ -15,10 +15,10 @@
     - BlobObjective
   - type: AntagSelection
     definitions:
-    - prefRoles: [ BlobAntag ]
+    - prefRoles: [ Blob ]
       min: 2
       max: 6
       playerRatio: 10
       mindRoles:
-      - MindRoleBlobAntag
+      - MindRoleBlob
   # TODO(Barry): This should probably have a spawn component on it, either space or random.

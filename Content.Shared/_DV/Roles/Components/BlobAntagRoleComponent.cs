@@ -3,4 +3,4 @@ using Content.Shared.Roles.Components;
 namespace Content.Shared._DV.Roles;
 
 [RegisterComponent]
-public sealed partial class BlobAntagRoleComponent : BaseMindRoleComponent;
+public sealed partial class BlobRoleComponent : BaseMindRoleComponent;

@@ -5,7 +5,7 @@ using Robust.Shared.Utility;
 namespace Content.Shared._DV.Blob;
 
 [Prototype]
-public sealed partial class BlobAntagUpgradePrototype : IPrototype
+public sealed partial class BlobUpgradePrototype : IPrototype
 {
     [IdDataField]
     public string ID { get; private set; } = default!;

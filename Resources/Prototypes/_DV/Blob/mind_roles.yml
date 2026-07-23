@@ -1,13 +1,13 @@
 - type: entity
   parent: BaseMindRoleAntag
-  id: MindRoleBlobAntag
+  id: MindRoleBlob
   name: Blob Antag Role
   components:
   - type: MindRole
-    antagPrototype: BlobAntag
+    antagPrototype: Blob
     subtype: role-subtype-blob
     exclusiveAntag: true
     roleType: TeamAntagonist
-  - type: BlobAntagRole
+  - type: BlobRole
   - type: RoleBriefing
     briefing: objective-blob-charactermenu

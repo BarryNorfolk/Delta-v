@@ -1,11 +1,11 @@
-- type: blobAntagUpgrade
+- type: blobUpgrade
   id: ResourceNode
   category: Economy
   sprite:
     sprite: _DV/Mobs/Blob/blob.rsi
     state: resource
   tooltip: Creates resources for ya
-  creates: BlobAntagResourceNode
+  creates: BlobResourceNode
   allowedFrom:
     components:
-    - BlobAntagSimpleNode
+    - BlobSimpleNode

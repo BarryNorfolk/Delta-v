@@ -1,5 +1,5 @@
 - type: antag
-  id: BlobAntag
+  id: Blob
   name: roles-antag-blob-name
   antagonist: true
   setPreference: true

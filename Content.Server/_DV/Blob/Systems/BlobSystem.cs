@@ -4,7 +4,7 @@ using Content.Shared._DV.Blob.Systems;
 
 namespace Content.Server._DV.Blob.Systems;
 
-public sealed class BlobAntagSystem : SharedBlobAntagSystem
+public sealed class BlobSystem : SharedBlobSystem
 {
     [Dependency] private readonly ActionsSystem _actions = default!;
 
@@ -12,10 +12,10 @@ public sealed class BlobAntagSystem : SharedBlobAntagSystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<BlobAntagComponent, ComponentInit>(OnBlobStart);
+        SubscribeLocalEvent<BlobComponent, ComponentInit>(OnBlobStart);
     }
 
-    private void OnBlobStart(Entity<BlobAntagComponent> blob, ref ComponentInit args)
+    private void OnBlobStart(Entity<BlobComponent> blob, ref ComponentInit args)
     {
         foreach (var actionId in blob.Comp.InnateActions)
         {

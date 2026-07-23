@@ -5,7 +5,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Client._DV.Blob.Systems;
 
-public sealed class BlobAntagSystem : SharedBlobAntagSystem
+public sealed class BlobSystem : SharedBlobSystem
 {
     [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
 
@@ -13,10 +13,10 @@ public sealed class BlobAntagSystem : SharedBlobAntagSystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<BlobAntagNodeComponent, GetBlobUpgradesEvent>(OnGetBlobUpgrades);
+        SubscribeLocalEvent<BlobNodeComponent, GetBlobUpgradesEvent>(OnGetBlobUpgrades);
     }
 
-    private void OnGetBlobUpgrades(Entity<BlobAntagNodeComponent> blob, ref GetBlobUpgradesEvent args)
+    private void OnGetBlobUpgrades(Entity<BlobNodeComponent> blob, ref GetBlobUpgradesEvent args)
     {
         foreach (var upgrade in AvailableUpgrades)
         {

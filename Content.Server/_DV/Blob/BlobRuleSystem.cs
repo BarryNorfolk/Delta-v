@@ -7,21 +7,21 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server._DV.Blob;
 
-public sealed class BlobAntagRuleSystem : GameRuleSystem<BlobAntagRuleComponent>
+public sealed class BlobRuleSystem : GameRuleSystem<BlobRuleComponent>
 {
     [Dependency] private readonly AntagSelectionSystem _antag = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly SharedRoleSystem _role = default!;
 
-    public static readonly EntProtoId MindRole = "MindRoleBlobAntag";
+    public static readonly EntProtoId MindRole = "MindRoleBlob";
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<BlobAntagRuleComponent, AfterAntagEntitySelectedEvent>(OnAntagSelect);
+        SubscribeLocalEvent<BlobRuleComponent, AfterAntagEntitySelectedEvent>(OnAntagSelect);
     }
 
-    private void OnAntagSelect(Entity<BlobAntagRuleComponent> uid, ref AfterAntagEntitySelectedEvent args)
+    private void OnAntagSelect(Entity<BlobRuleComponent> uid, ref AfterAntagEntitySelectedEvent args)
     {
         var overmind = args.EntityUid;
         if (!_mind.TryGetMind(overmind, out var mindId, out var mind))

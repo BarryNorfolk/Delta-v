@@ -276,11 +276,11 @@ public sealed partial class AdminVerbSystem
 
                 // Spawn a new blob core at the location of the player
                 var coords = Transform(originalEntity).Coordinates;
-                var core = SpawnAtPosition("BlobAntagCore", coords.AlignWithClosestGridTile()); // TODO(Barry): Make the prototype not be a literal
+                var core = SpawnAtPosition("BlobCore", coords.AlignWithClosestGridTile()); // TODO(Barry): Make the prototype not be a literal
                 _mindSystem.ControlMob(targetPlayer.UserId, core);
 
                 // Make it the actual antag.
-                _antag.ForceMakeAntag<BlobAntagRuleComponent>(targetPlayer, "BlobAntagRule");
+                _antag.ForceMakeAntag<BlobRuleComponent>(targetPlayer, "BlobRule");
 
                 // Clean up the original entity now that we don't need it.
                 QueueDel(originalEntity);

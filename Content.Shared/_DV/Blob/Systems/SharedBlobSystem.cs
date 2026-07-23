@@ -14,12 +14,12 @@ namespace Content.Shared._DV.Blob.Systems;
 
 // TODO(Barry): Move this somewhere else
 [NetSerializable, Serializable]
-public enum BlobAntagUiKey : byte
+public enum BlobUiKey : byte
 {
     Key
 }
 
-public abstract class SharedBlobAntagSystem : EntitySystem
+public abstract class SharedBlobSystem : EntitySystem
 {
     // TODO(Barry): Look through these deps and try and figure out which ones can stay private
     [Dependency] protected readonly IGameTiming Timing = default!;
@@ -29,9 +29,9 @@ public abstract class SharedBlobAntagSystem : EntitySystem
     [Dependency] private readonly SharedUserInterfaceSystem _bui = default!;
     [Dependency] protected readonly IPrototypeManager PrototypeManager = default!;
 
-    private readonly EntProtoId _blobNode = "BlobAntagNode";
+    private readonly EntProtoId _blobNode = "BlobNode";
 
-    protected HashSet<ProtoId<BlobAntagUpgradePrototype>> AvailableUpgrades = new();
+    protected HashSet<ProtoId<BlobUpgradePrototype>> AvailableUpgrades = new();
 
     // Frustrating that this is not available easily, we only have ALL directions.
     protected readonly Direction[] CardinalDirections = [
@@ -45,10 +45,10 @@ public abstract class SharedBlobAntagSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<BlobAntagComponent, EventBlobCreateNode>(OnCreateNode);
-        SubscribeLocalEvent<BlobAntagComponent, EventBlobUpgradeNode>(OnUpgradeAction);
+        SubscribeLocalEvent<BlobComponent, EventBlobCreateNode>(OnCreateNode);
+        SubscribeLocalEvent<BlobComponent, EventBlobUpgradeNode>(OnUpgradeAction);
 
-        foreach (var prototype in PrototypeManager.EnumeratePrototypes<BlobAntagUpgradePrototype>())
+        foreach (var prototype in PrototypeManager.EnumeratePrototypes<BlobUpgradePrototype>())
         {
             // TODO(Barry): Does it even make sense to cache these here?
             //              Is the enumeration here costly enough that we need to?
@@ -56,7 +56,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         }
     }
 
-    protected void AddEnergy(Entity<BlobAntagComponent> blob, int amount)
+    protected void AddEnergy(Entity<BlobComponent> blob, int amount)
     {
         // We're adding energy here, check if we're already above the max energy
         if (blob.Comp.Energy >= blob.Comp.MaxEnergy)
@@ -66,7 +66,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         blob.Comp.Energy += Math.Min(amount, blob.Comp.MaxEnergy - blob.Comp.Energy);
     }
 
-    protected bool HasEnergy(Entity<BlobAntagComponent> blob, int amount)
+    protected bool HasEnergy(Entity<BlobComponent> blob, int amount)
     {
         if (blob.Comp.Energy < amount)
         {
@@ -77,13 +77,13 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         return true;
     }
 
-    protected void RemoveEnergy(Entity<BlobAntagComponent> blob, int amount)
+    protected void RemoveEnergy(Entity<BlobComponent> blob, int amount)
     {
         // TODO(Barry): Double check this? Debug assert?
         blob.Comp.Energy -= amount;
     }
 
-    private void OnCreateNode(Entity<BlobAntagComponent> blob, ref EventBlobCreateNode args)
+    private void OnCreateNode(Entity<BlobComponent> blob, ref EventBlobCreateNode args)
     {
         if (!TryComp<ActionCostComponent>(args.Action, out var actionCost))
             return;
@@ -99,15 +99,15 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         RemoveEnergy(blob, actionCost.Cost);
     }
 
-    private void OnUpgradeAction(Entity<BlobAntagComponent> blob, ref EventBlobUpgradeNode args)
+    private void OnUpgradeAction(Entity<BlobComponent> blob, ref EventBlobUpgradeNode args)
     {
         if (args.Handled || !TryComp<ActorComponent>(blob, out var actor))
             return;
         args.Handled = true;
 
-        _bui.TryToggleUi(args.Target, BlobAntagUiKey.Key, actor.PlayerSession);
+        _bui.TryToggleUi(args.Target, BlobUiKey.Key, actor.PlayerSession);
     }
-    private bool TrySpawnNode(Entity<BlobAntagComponent> blob, EntityCoordinates coords)
+    private bool TrySpawnNode(Entity<BlobComponent> blob, EntityCoordinates coords)
     {
         // TODO(Barry): Check whether this is a valid place to put a tile.
 
@@ -121,7 +121,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         {
             var neighborCoord = coords.Offset(direction.ToIntVec());
             var neighborEnts = Lookup.GetEntitiesIntersecting(neighborCoord);
-            if (neighborEnts.Any(HasComp<BlobAntagNodeComponent>))
+            if (neighborEnts.Any(HasComp<BlobNodeComponent>))
             {
                 hasNeighbor = true;
                 break;
@@ -143,7 +143,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         base.Update(frameTime);
 
         var now = Timing.CurTime;
-        var query = EntityQueryEnumerator<BlobAntagComponent>();
+        var query = EntityQueryEnumerator<BlobComponent>();
         while (query.MoveNext(out var blob, out var comp))
         {
             if (comp.NextBlobPulse > now)

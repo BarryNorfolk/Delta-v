@@ -3,7 +3,7 @@ using Content.Shared.NodeContainer.NodeGroups;
 
 namespace Content.Server._DV.Blob;
 
-[NodeGroup(NodeGroupID.BlobAntag)]
-public sealed class BlobAntagNet : BaseNodeGroup
+[NodeGroup(NodeGroupID.Blob)]
+public sealed class BlobNet : BaseNodeGroup
 {
 }

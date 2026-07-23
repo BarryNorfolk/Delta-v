@@ -6,9 +6,9 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 namespace Content.Shared._DV.Blob.Components;
 
 [RegisterComponent, NetworkedComponent]
-[Access(typeof(SharedBlobAntagSystem))]
+[Access(typeof(SharedBlobSystem))]
 [AutoGenerateComponentState]
-public sealed partial class BlobAntagComponent : Component
+public sealed partial class BlobComponent : Component
 {
     [DataField]
     public HashSet<EntProtoId> InnateActions = [

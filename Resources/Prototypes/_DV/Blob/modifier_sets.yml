@@ -1,5 +1,5 @@
 - type: damageModifierSet
-  id: BlobAntag
+  id: Blob
   coefficients:
     Blunt: 1.0
     Slash: 1.0

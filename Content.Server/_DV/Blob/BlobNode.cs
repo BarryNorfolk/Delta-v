@@ -5,7 +5,7 @@ using Robust.Shared.Map.Components;
 namespace Content.Server._DV.Blob;
 
 [DataDefinition]
-public sealed partial class BlobAntagNode : Node
+public sealed partial class BlobNode : Node
 {
     public override IEnumerable<Node> GetReachableNodes(TransformComponent xform,
         EntityQuery<NodeContainerComponent> nodeQuery,

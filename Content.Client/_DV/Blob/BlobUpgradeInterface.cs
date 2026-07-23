@@ -6,14 +6,14 @@ using Robust.Shared.Utility;
 namespace Content.Client._DV.Blob;
 
 [UsedImplicitly]
-public sealed class BlobAntagUpgradeInterface : BoundUserInterface
+public sealed class BlobUpgradeInterface : BoundUserInterface
 {
     // TODO(Barry): Figure this data part out
     private sealed class BaseBlobUpgrade;
 
     private SimpleRadialMenu? _menu = null;
 
-    public BlobAntagUpgradeInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
+    public BlobUpgradeInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
         IoCManager.InjectDependencies(this); // TODO(Barry): If we end up with no deps, we can remove this
     }
