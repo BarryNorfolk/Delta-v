@@ -63,5 +63,11 @@ public sealed class BlobSystem : SharedBlobSystem
             var pulseEvent = new BlobNetworkPulseEvent(blob);
             RaiseLocalEvent(receiver, ref pulseEvent);
         }
+
+        /*
+            Resources or other attributes may have changed due to the network pulse
+            so it's good to make sure the client is aware.
+        */
+        Dirty(blob);
     }
 }
