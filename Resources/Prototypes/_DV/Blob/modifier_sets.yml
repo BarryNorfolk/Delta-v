@@ -1,0 +1,12 @@
+- type: damageModifierSet
+  id: BlobAntag
+  coefficients:
+    Blunt: 1.0
+    Slash: 1.0
+    Piercing: 1.0
+    Cold: 0.0
+    Poison: 0.0
+    Radiation: 0.0
+    Asphyxiation: 0.0
+    Bloodloss: 0.0
+    Cellular: 0.0

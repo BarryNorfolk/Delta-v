@@ -19,8 +19,6 @@
       min: 2
       max: 6
       playerRatio: 10
-      components:
-      - type: BlobAntag
       mindRoles:
       - MindRoleBlobAntag
   # TODO(Barry): This should probably have a spawn component on it, either space or random.

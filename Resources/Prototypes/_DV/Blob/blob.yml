@@ -1,14 +1,68 @@
-# The actual blob core
+# The base for any node in the Blob's network
 - type: entity
-  id: BlobAntagCore
-  parent: PositronicBrain
+  id: BlobAntagNodeBase
+  parent: BaseStructure
+  abstract: true
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
   - type: Sprite
     sprite: _DV/Mobs/Blob/blob.rsi
     layers:
-    - state: blob_core
-  - type: ComplexInteraction
+    - state: regular
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.5"
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+        density: 200
+  - type: Damageable
+    damageModifierSet: BlobAntag
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak # TODO(Barry): A better sound here
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak # TODO(Barry): A better sound here
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: InteractionOutline
+  - type: Examiner
+
+# A regular node on the blob network
+- type: entity
+  id: BlobAntagNode
+  parent: BlobAntagNodeBase
+  categories: [ HideSpawnMenu, DoNotMap ]
+
+# The core node that will house the overmind/player
+- type: entity
+  id: BlobAntagCore
+  parent: BlobAntagNodeBase
+  name: Blob Core
+  description: The core of the blob, it pulstates with the power of a thousand moons...
+  categories: [ HideSpawnMenu, DoNotMap ]
+  components:
+  - type: BlobAntag
+  - type: Sprite
+    sprite: _DV/Mobs/Blob/blob.rsi
+    layers:
+    - state: special_base
+    - state: core
   - type: Actions
   - type: Eye
     drawFov: false
@@ -16,25 +70,18 @@
   - type: InputMover
   - type: BlockMovement
     blockInteraction: false
-  - type: GhostOnMove
-    mustBeDead: true
-  - type: Tag
-    tags:
-    - HideContextMenu
   - type: StartingMindRole
     mindRole: "MindRoleBlobAntag"
     silent: true
-  - type: NameIdentifier
-    group: StationAi # TODO(Barry): What dis
 
-# Projection that the blob overmind can use to move around with
+# Projection that the overmind can use to move around with
 - type: entity
   parent:
   - Incorporeal
   - BaseMob
-  id: BlobAntagOvermind
+  id: BlobAntagOvermindEye
   name: Blob Overmind
-  description: The true mind behind the Blob
+  description: The eye of the Blob
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
   - type: NoFTL

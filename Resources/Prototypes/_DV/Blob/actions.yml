@@ -1,0 +1,17 @@
+- type: entity
+  parent: BaseAction
+  id: ActionBlobCreateNode
+  name: Create Node
+  description: Spread your network and create a new node
+  components:
+  - type: Action
+    useDelay: 30
+    itemIconStyle: NoItem
+    icon:
+      sprite: _DV/CosmicCult/Icons/cosmiccult_abilities.rsi # TODO(Barry): Icons
+      state: siphon
+  - type: TargetAction
+    range: -1
+  - type: WorldTargetAction
+    event: !type:EventBlobCreateNode {}
+
