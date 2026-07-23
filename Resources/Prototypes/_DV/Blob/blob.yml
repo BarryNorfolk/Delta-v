@@ -10,6 +10,7 @@
     interfaces:
       enum.BlobUiKey.Key:
         type: BlobUpgradeInterface
+        interactionRange: -1 # Infinite range
   - type: Sprite
     sprite: _DV/Mobs/Blob/blob.rsi
     layers:
@@ -88,6 +89,10 @@
     - state: resource
   - type: BlobPulseReceiver
   - type: BlobResourceProducer
+  - type: BlobNodePlacementLimiter
+    component: BlobResourceProducer
+    minTileDistance: 4
+    maximumCount: 4
 
 # The core node that will house the overmind/player
 - type: entity

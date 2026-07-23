@@ -24,6 +24,7 @@ public enum BlobUiKey : byte
 public abstract class SharedBlobSystem : EntitySystem
 {
     // TODO(Barry): Look through these deps and try and figure out which ones can stay private
+    [Dependency] private readonly IComponentFactory _factory = default!;
     [Dependency] protected readonly IGameTiming Timing = default!;
     [Dependency] protected readonly SharedPopupSystem Popup = default!;
     [Dependency] protected readonly EntityLookupSystem Lookup = default!;
@@ -79,6 +80,14 @@ public abstract class SharedBlobSystem : EntitySystem
     {
         // TODO(Barry): Double check this? Debug assert?
         blob.Comp.Energy -= amount;
+    }
+
+    private void BindNodeToCore(EntityUid node, EntityUid? core)
+    {
+        var nodeComp = EnsureComp<BlobNodeComponent>(node);
+        nodeComp.BlobCore = core;
+
+        Dirty(node, nodeComp);
     }
 
     private void OnCreateNode(Entity<BlobComponent> blob, ref EventBlobCreateNode args)
@@ -139,9 +148,44 @@ public abstract class SharedBlobSystem : EntitySystem
     private void OnUpgradeBlobNode(Entity<BlobNodeComponent> node, ref BlobUpgradeMessage args)
     {
         // TODO (Barry): This is probably overly simple and needs work
+
+        // TODO (Barry): Is this the actual valid way to check the components on a given prototype?
+        var foo = PrototypeManager.Index(args.ProtoId);
+        if (foo.TryGetComponent<BlobNodePlacementLimiterComponent>(
+            _factory.GetComponentName<BlobNodePlacementLimiterComponent>(), out var limitation))
+        {
+            if (!_factory.TryGetRegistration(limitation.Component, out var registration))
+                return;
+
+            var xform = Transform(node);
+
+            var query = EntityManager.AllEntityQueryEnumerator(registration.Type);
+            var entities = EntityManager.AllEntities(registration.Type);
+            if (limitation.MaximumCount > 0 && entities.Length >= limitation.MaximumCount)
+            {
+                Popup.PopupClient("Too Many", node, node.Comp.BlobCore, PopupType.MediumCaution);
+                return;
+            }
+
+            foreach (var otherNode in entities)
+            {
+                var otherXform = Transform(otherNode);
+                xform.Coordinates.TryDistance(EntityManager, otherXform.Coordinates, out var distance);
+
+                if (distance < limitation.MinTileDistance)
+                {
+                    Popup.PopupClient("Too close", node, node.Comp.BlobCore, PopupType.MediumCaution);
+                    return;
+                }
+            }
+        }
+
         var transform = Transform(node);
-        Spawn(args.ProtoId, transform.Coordinates);
-        QueueDel(node);
+        var newNode = Spawn(args.ProtoId, transform.Coordinates);
+        BindNodeToCore(newNode, node.Comp.BlobCore);
+
+        // Cleanup the old node
+        PredictedQueueDel(node);
     }
 
     private bool TrySpawnNode(Entity<BlobComponent> blob, EntityCoordinates coords)
@@ -188,7 +232,9 @@ public abstract class SharedBlobSystem : EntitySystem
                 return false; // No spreading node over another node
         }
 
-        PredictedSpawnAtPosition(_blobNode, coords);
+        var newNode = PredictedSpawnAtPosition(_blobNode, coords);
+        BindNodeToCore(newNode, blob);
+
         return true;
     }
 

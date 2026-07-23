@@ -67,6 +67,6 @@ public sealed class BlobUpgradeInterface : BoundUserInterface
 
     private void HandleRadialMenuClick(BlobUpgradeRadial p)
     {
-        SendMessage(new BlobUpgradeMessage(p.Prototype));
+        SendPredictedMessage(new BlobUpgradeMessage(p.Prototype));
     }
 }
