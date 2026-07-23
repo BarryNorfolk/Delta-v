@@ -5,6 +5,7 @@ using Content.Shared.NodeContainer;
 using Content.Shared.Popups;
 using Content.Shared.Whitelist;
 using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
@@ -30,6 +31,7 @@ public abstract class SharedBlobSystem : EntitySystem
     [Dependency] private readonly SharedUserInterfaceSystem _bui = default!;
     [Dependency] protected readonly IPrototypeManager PrototypeManager = default!;
     [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
+    [Dependency] private readonly SharedMapSystem _map = default!;
 
     private readonly EntProtoId _blobNode = "BlobNode";
 
@@ -144,6 +146,11 @@ public abstract class SharedBlobSystem : EntitySystem
 
     private bool TrySpawnNode(Entity<BlobComponent> blob, EntityCoordinates coords)
     {
+        // If we have no grid or transform, no point in doing any more expensive checks
+        var xform = Transform(blob);
+        if (!TryComp<MapGridComponent>(xform.GridUid, out var grid))
+            return false; // Somehow not on a grid
+
         // TODO(Barry): Check whether this is a valid place to put a tile.
 
         // Check it's got a neighbour that has a blob node on it
@@ -167,6 +174,18 @@ public abstract class SharedBlobSystem : EntitySystem
         {
             Popup.PopupClient(Loc.GetString("blob-action-spawn-node-fail-neighbour"), blob);
             return false;
+        }
+
+        // Is anything on this tile that would otherwise stop us from spreading there?
+        // (I.e. A wall, table, anchored machine, etc).
+        var anchoredEnts = _map.GetAnchoredEntities(xform.GridUid.Value, grid, coords);
+        foreach (var ent in anchoredEnts)
+        {
+            // TODO (Barry): Add more checks here, because we shuoldn't be able to
+            // put nodes of walls and other andhor things. But for the moment, just regular
+            // checking for blob nodes is good enough.
+            if (HasComp<BlobNodeComponent>(ent))
+                return false; // No spreading node over another node
         }
 
         PredictedSpawnAtPosition(_blobNode, coords);
