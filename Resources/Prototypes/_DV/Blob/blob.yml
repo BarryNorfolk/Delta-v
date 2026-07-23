@@ -53,10 +53,17 @@
       types:
         Slash: 10
         Piercing: 10
+  - type: NodeContainer
+    nodes:
+      blob: !type:BlobAntagNode
+        nodeGroupID: BlobAntag
+        needAnchored: false
 
 # A regular node on the blob network
 - type: entity
   id: BlobAntagNode
+  name: Blob Node
+  description: A part of the blob, it looks eerily comfy...
   parent: BlobAntagNodeBase
   categories: [ HideSpawnMenu, DoNotMap ]
 
