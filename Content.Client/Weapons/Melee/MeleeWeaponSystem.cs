@@ -212,7 +212,7 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
     {
         var attackerPos = TransformSystem.GetMapCoordinates(attacker);
 
-        if (mousePos.MapId != attackerPos.MapId || (attackerPos.Position - mousePos.Position).Length() > meleeComponent.Range)
+        if (mousePos.MapId != attackerPos.MapId || meleeComponent.Range > 0f && (attackerPos.Position - mousePos.Position).Length() > meleeComponent.Range) // DeltaV - Allow infinite range
             return;
 
         EntityUid? target = null;
