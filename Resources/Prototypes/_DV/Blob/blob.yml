@@ -65,7 +65,21 @@
   name: Blob Node
   description: A part of the blob, it looks eerily comfy...
   parent: BlobAntagNodeBase
-  categories: [ HideSpawnMenu, DoNotMap ]
+  categories: [ DoNotMap ]
+
+# A node on the network that generates resources
+- type: entity
+  id: BlobAntagResourceNode
+  name: Blob Resource Node
+  description: A hardworking, white collar resource node...
+  parent: BlobAntagNodeBase
+  categories: [ DoNotMap ]
+  components:
+  - type: Sprite
+    sprite: _DV/Mobs/Blob/blob.rsi
+    layers:
+    - state: special_base
+    - state: resource
 
 # The core node that will house the overmind/player
 - type: entity
@@ -73,7 +87,7 @@
   parent: BlobAntagNodeBase
   name: Blob Core
   description: The core of the blob, it pulstates with the power of a thousand moons...
-  categories: [ HideSpawnMenu, DoNotMap ]
+  categories: [ DoNotMap ]
   components:
   - type: BlobAntag
   - type: Sprite
