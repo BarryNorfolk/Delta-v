@@ -5,7 +5,9 @@
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
   - type: Sprite
-    visible: false
+    sprite: _DV/Mobs/Blob/blob.rsi
+    layers:
+    - state: blob_core
   - type: ComplexInteraction
   - type: Actions
   - type: Eye
@@ -49,8 +51,8 @@
   - type: Visibility
     layer: 2
   - type: Sprite
-    sprite: Mobs/Silicon/station_ai.rsi #TODO(Barry): An actual icon/sprite
+    sprite: _DV/Mobs/Blob/blob.rsi
     layers:
-    - state: ai_camera
+    - state: overmind
       shader: unshaded
       map: ["base"]

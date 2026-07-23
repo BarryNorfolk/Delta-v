@@ -1,0 +1,23 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "BarryNorfolk (Github), for DeltaV.",
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "special_base"
+        },
+        {
+            "name": "regular"
+        },
+        {
+            "name": "core"
+        },
+        {
+            "name": "overmind"
+        }
+    ]
+}
