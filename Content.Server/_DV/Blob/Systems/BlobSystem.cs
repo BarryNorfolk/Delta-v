@@ -16,6 +16,7 @@ public sealed class BlobSystem : SharedBlobSystem
     [Dependency] private readonly NodeContainerSystem _nodeContainer = default!;
 
     private readonly string _blobNodeID = "blob";
+    private EntityQuery<BlobPulseReceiverComponent> _pulseReceiverQuery;
 
     public override void Initialize()
     {
@@ -24,6 +25,8 @@ public sealed class BlobSystem : SharedBlobSystem
         SubscribeLocalEvent<BlobComponent, ComponentInit>(OnBlobStart);
 
         SubscribeLocalEvent<BlobResourceProducerComponent, BlobNetworkPulseEvent>(OnResourcePulse);
+
+        _pulseReceiverQuery = GetEntityQuery<BlobPulseReceiverComponent>();
     }
 
     private void OnBlobStart(Entity<BlobComponent> blob, ref ComponentInit args)
@@ -67,20 +70,15 @@ public sealed class BlobSystem : SharedBlobSystem
         if (!GetCoreNodes(blob, out var coreNodeGroup))
             return;
 
-        // TODO(Barry): Store this query so it's re-used
-        var query = EntityQueryEnumerator<BlobPulseReceiverComponent>();
-        while (query.MoveNext(out var receiver, out var comp))
+        // We only care about nodes that are on the CORE's node group so don't need to venture
+        // outside that and find all receivers in the game.
+        foreach (var node in coreNodeGroup.Nodes)
         {
-            if (!_nodeContainer.TryGetNode<BlobNode>(
-                EntityManager.GetComponent<NodeContainerComponent>(receiver), _blobNodeID, out var node))
-                continue; // Not a part of ANY node network?
-
-            // TODO (Barry): Make sure that this node is actually connected and reachable
-            if (!coreNodeGroup.Nodes.Any(x => x.Owner == node.Owner))
-                continue; // Not on the same group as the core, or not reachable FROM the core
+            if (!_pulseReceiverQuery.HasComp(node.Owner))
+                continue;
 
             var pulseEvent = new BlobNetworkPulseEvent(blob);
-            RaiseLocalEvent(receiver, ref pulseEvent);
+            RaiseLocalEvent(node.Owner, ref pulseEvent);
         }
 
         /*

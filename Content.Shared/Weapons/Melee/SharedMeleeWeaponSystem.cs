@@ -47,7 +47,7 @@ using ItemToggleMeleeWeaponComponent = Content.Shared.Item.ItemToggle.Components
 
 namespace Content.Shared.Weapons.Melee;
 
-public abstract class SharedMeleeWeaponSystem : EntitySystem
+public abstract partial class SharedMeleeWeaponSystem : EntitySystem // DeltaV - Made Partial
 {
     [Dependency] protected readonly IGameTiming Timing = default!;
     [Dependency] protected readonly IMapManager MapManager = default!;
@@ -219,6 +219,11 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
             return;
         }
 
+        // Begin DeltaV Additions
+        if (RedirectedAttack(user, msg, args))
+            return;
+        // End DeltaV Additions
+
         AttemptAttack(user, weaponUid, weapon, msg, args.SenderSession);
     }
 
@@ -232,6 +237,12 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
         {
             return;
         }
+
+        // Begin DeltaV Additions
+        // TODO (Barry): Figure out heavy attacks a little
+        //if (RedirectedAttack(user, msg, args))
+        //    return;
+        // End DeltaV Additions
 
         AttemptAttack(user, weaponUid, weapon, msg, args.SenderSession);
     }

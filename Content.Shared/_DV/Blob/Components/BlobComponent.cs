@@ -33,4 +33,9 @@ public sealed partial class BlobComponent : Component
 
     [DataField]
     public TimeSpan BlobPulseDelay = TimeSpan.FromSeconds(1);
+
+    public EntProtoId RemoteEntityProto = "BlobOvermindEye";
+    public EntityUid? RemoteEntity;
+
+    public const string Container = "";
 }

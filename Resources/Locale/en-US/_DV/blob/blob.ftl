@@ -13,3 +13,5 @@ roles-antag-blob-description = Be the blob. Blob it up.
 
 objective-condition-blob-title = BE THE BLOB
 objective-condition-blob-desc = Consume the station. Their lives are fertilizer for your spores.
+
+blob-eye-name = Blob Overmind - {$name}

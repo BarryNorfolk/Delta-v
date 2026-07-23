@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Shared._DV.Actions;
 using Content.Shared._DV.Blob.Components;
+using Content.Shared.Movement.Systems;
 using Content.Shared.NodeContainer;
 using Content.Shared.Popups;
 using Content.Shared.Whitelist;
@@ -33,6 +34,9 @@ public abstract class SharedBlobSystem : EntitySystem
     [Dependency] protected readonly IPrototypeManager PrototypeManager = default!;
     [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
+    [Dependency] private readonly SharedEyeSystem _eye = default!;
+    [Dependency] private readonly SharedMoverController _mover = default!;
+    [Dependency] private readonly MetaDataSystem _metadata = default!;
 
     private readonly EntProtoId _blobNode = "BlobNode";
 
@@ -47,6 +51,8 @@ public abstract class SharedBlobSystem : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
+
+        SubscribeLocalEvent<BlobComponent, MapInitEvent>(OnMapInit);
 
         SubscribeLocalEvent<BlobComponent, EventBlobCreateNode>(OnCreateNode);
         SubscribeLocalEvent<BlobComponent, EventBlobUpgradeNode>(OnUpgradeAction);
@@ -88,6 +94,23 @@ public abstract class SharedBlobSystem : EntitySystem
         nodeComp.BlobCore = core;
 
         Dirty(node, nodeComp);
+    }
+
+    private void OnMapInit(Entity<BlobComponent> blob, ref MapInitEvent args)
+    {
+        blob.Comp.RemoteEntity = PredictedSpawnAtPosition(blob.Comp.RemoteEntityProto, Transform(blob.Owner).Coordinates);
+        Dirty(blob);
+
+        if (TryComp(blob, out EyeComponent? eyeComp))
+        {
+            _eye.SetDrawFov(blob, false, eyeComp);
+            _eye.SetTarget(blob, blob.Comp.RemoteEntity.Value, eyeComp);
+        }
+
+        _mover.SetRelay(blob, blob.Comp.RemoteEntity.Value);
+
+        var eyeName = Loc.GetString("blob-eye-name", ("name", Name(blob)));
+        _metadata.SetEntityName(blob.Comp.RemoteEntity.Value, eyeName);
     }
 
     private void OnCreateNode(Entity<BlobComponent> blob, ref EventBlobCreateNode args)
