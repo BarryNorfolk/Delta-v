@@ -1,0 +1,56 @@
+# The actual blob core
+- type: entity
+  id: BlobAntagCore
+  parent: PositronicBrain
+  categories: [ HideSpawnMenu, DoNotMap ]
+  components:
+  - type: Sprite
+    visible: false
+  - type: ComplexInteraction
+  - type: Actions
+  - type: Eye
+    drawFov: false
+  - type: Examiner
+  - type: InputMover
+  - type: BlockMovement
+    blockInteraction: false
+  - type: GhostOnMove
+    mustBeDead: true
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: StartingMindRole
+    mindRole: "MindRoleBlobAntag"
+    silent: true
+  - type: NameIdentifier
+    group: StationAi # TODO(Barry): What dis
+
+# Projection that the blob overmind can use to move around with
+- type: entity
+  parent:
+  - Incorporeal
+  - BaseMob
+  id: BlobAntagOvermind
+  name: Blob Overmind
+  description: The true mind behind the Blob
+  categories: [ HideSpawnMenu, DoNotMap ]
+  components:
+  - type: NoFTL
+  - type: Tag
+    tags:
+    - GhostOnlyWarp
+  - type: WarpPoint
+    follow: true
+    blacklist:
+      tags:
+      - GhostOnlyWarp
+  - type: Eye
+    pvsScale: 1.5
+  - type: Visibility
+    layer: 2
+  - type: Sprite
+    sprite: Mobs/Silicon/station_ai.rsi #TODO(Barry): An actual icon/sprite
+    layers:
+    - state: ai_camera
+      shader: unshaded
+      map: ["base"]

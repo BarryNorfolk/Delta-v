@@ -271,6 +271,8 @@ public sealed partial class AdminVerbSystem
             Icon = new SpriteSpecifier.Rsi(new ResPath("/Textures/Interface/Misc/job_icons.rsi"), "Nanotrasen"), // TODO(Barry): Make a job icon
             Act = () =>
             {
+                // TODO(Barry): Perhaps here we should be making the new body for the antag since we're converting
+                // an entity INTO the overmind.
                 _antag.ForceMakeAntag<BlobAntagRuleComponent>(targetPlayer, "BlobAntagRule");
             },
             Impact = LogImpact.High,
