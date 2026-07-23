@@ -17,3 +17,27 @@
   - type: ActionCost
     cost: 50
 
+- type: entity
+  parent: BaseAction
+  id: ActionBlobUpgradeNode
+  name: Upgrade Node
+  description: Upgrade a node in your network
+  components:
+  - type: Action
+    useDelay: 30
+    itemIconStyle: NoItem
+    icon:
+      sprite: _DV/CosmicCult/Icons/cosmiccult_abilities.rsi # TODO(Barry): Icons
+      state: siphon
+  - type: TargetAction
+    range: -1
+    checkCanAccess: false
+  - type: EntityTargetAction
+    event: !type:EventBlobUpgradeNode {}
+    canTargetSelf: false
+    whitelist:
+      components:
+      - BlobAntagNode
+  - type: ActionCost
+    cost: 10
+

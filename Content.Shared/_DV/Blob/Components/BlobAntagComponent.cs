@@ -13,6 +13,7 @@ public sealed partial class BlobAntagComponent : Component
     [DataField]
     public HashSet<EntProtoId> InnateActions = [
         "ActionBlobCreateNode",
+        "ActionBlobUpgradeNode",
     ];
 
     [DataField]
