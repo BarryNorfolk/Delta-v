@@ -42,6 +42,16 @@
         acts: ["Destruction"]
   - type: InteractionOutline
   - type: Examiner
+  - type: MeleeWeapon
+    soundHit:
+      path: "/Audio/Weapons/smash.ogg" # TODO(Barry): Sounds and Damage
+    angle: 0
+    attackRate: 0.75
+    animation: WeaponArcPunch
+    damage:
+      types:
+        Slash: 10
+        Piercing: 10
 
 # A regular node on the blob network
 - type: entity
