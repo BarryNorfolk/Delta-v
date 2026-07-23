@@ -26,7 +26,7 @@ public sealed partial class BlobComponent : Component
     public int MaxEnergy = 480;
 
     [DataField]
-    public int EnergyPerSecond = 1;
+    public int EnergyPerPulse = 1;
 
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer))]
     public TimeSpan NextBlobPulse = TimeSpan.Zero;

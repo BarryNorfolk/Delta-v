@@ -86,6 +86,8 @@
     layers:
     - state: special_base
     - state: resource
+  - type: BlobPulseReceiver
+  - type: BlobResourceProducer
 
 # The core node that will house the overmind/player
 - type: entity

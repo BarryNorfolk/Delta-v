@@ -15,7 +15,7 @@
   - type: WorldTargetAction
     event: !type:EventBlobCreateNode {}
   - type: ActionCost
-    cost: 50
+    cost: 1 # TODO (Barry): Actually put this to a number after we're finished testing
 
 - type: entity
   parent: BaseAction

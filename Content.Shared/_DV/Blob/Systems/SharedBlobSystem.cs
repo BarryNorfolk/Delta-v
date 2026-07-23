@@ -102,7 +102,7 @@ public abstract class SharedBlobSystem : EntitySystem
         args.Handled = true;
 
         var ev = new GetBlobUpgradesEvent(args.Target);
-        RaiseLocalEvent(blob, ref ev);
+        RaiseLocalEvent(args.Target, ref ev);
 
         if (ev.Upgrades.Count == 0)
         {
@@ -173,22 +173,29 @@ public abstract class SharedBlobSystem : EntitySystem
         return true;
     }
 
+    public virtual void PulseNetwork(Entity<BlobComponent> blob)
+    {
+        // TODO (Barry): Make this just a pure virtual if there's nothing to be done on the client
+        // side. We probably want to predict some visuals for the pulse though.
+    }
+
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
 
         var now = Timing.CurTime;
-        var query = EntityQueryEnumerator<BlobComponent>();
+        var query = EntityQueryEnumerator<BlobComponent>(); // TODO(Barry): Store the query
         while (query.MoveNext(out var blob, out var comp))
         {
             if (comp.NextBlobPulse > now)
                 continue;
 
             comp.NextBlobPulse = now + comp.BlobPulseDelay;
-            AddEnergy((blob, comp), comp.EnergyPerSecond);
+            AddEnergy((blob, comp), comp.EnergyPerPulse);
 
             // Spread out from the core if able
             // Then pulse any special nodes on the network
+            PulseNetwork((blob, comp));
         }
     }
 }
