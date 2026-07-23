@@ -5,10 +5,19 @@ using Content.Shared.NodeContainer;
 using Content.Shared.Popups;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._DV.Blob.Systems;
+
+// TODO(Barry): Move this somewhere else
+[NetSerializable, Serializable]
+public enum BlobAntagUiKey : byte
+{
+    Key
+}
 
 public abstract class SharedBlobAntagSystem : EntitySystem
 {
@@ -17,6 +26,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
     [Dependency] protected readonly SharedPopupSystem Popup = default!;
     [Dependency] protected readonly EntityLookupSystem Lookup = default!;
     [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private readonly SharedUserInterfaceSystem _bui = default!;
 
     private readonly EntProtoId _blobNode = "BlobAntagNode";
 
@@ -33,6 +43,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<BlobAntagComponent, EventBlobCreateNode>(OnCreateNode);
+        SubscribeLocalEvent<BlobAntagComponent, EventBlobUpgradeNode>(OnUpgradeAction);
     }
 
     protected void AddEnergy(Entity<BlobAntagComponent> blob, int amount)
@@ -78,6 +89,14 @@ public abstract class SharedBlobAntagSystem : EntitySystem
         RemoveEnergy(blob, actionCost.Cost);
     }
 
+    private void OnUpgradeAction(Entity<BlobAntagComponent> blob, ref EventBlobUpgradeNode args)
+    {
+        if (args.Handled || !TryComp<ActorComponent>(blob, out var actor))
+            return;
+        args.Handled = true;
+
+        _bui.TryToggleUi(blob.Owner, BlobAntagUiKey.Key, actor.PlayerSession);
+    }
     private bool TrySpawnNode(Entity<BlobAntagComponent> blob, EntityCoordinates coords)
     {
         // TODO(Barry): Check whether this is a valid place to put a tile.

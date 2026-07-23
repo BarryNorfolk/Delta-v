@@ -105,6 +105,10 @@
   - type: StartingMindRole
     mindRole: "MindRoleBlobAntag"
     silent: true
+  - type: UserInterface
+    interfaces:
+      enum.BlobAntagUiKey.Key:
+        type: BlobAntagUpgradeInterface
 
 # Projection that the overmind can use to move around with
 - type: entity
