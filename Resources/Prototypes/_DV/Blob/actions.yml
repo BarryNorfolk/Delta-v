@@ -14,4 +14,6 @@
     range: -1
   - type: WorldTargetAction
     event: !type:EventBlobCreateNode {}
+  - type: ActionCost
+    cost: 50
 

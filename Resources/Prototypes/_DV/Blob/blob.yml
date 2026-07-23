@@ -5,6 +5,7 @@
   abstract: true
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
+  - type: BlobAntagNode
   - type: Sprite
     sprite: _DV/Mobs/Blob/blob.rsi
     layers:
