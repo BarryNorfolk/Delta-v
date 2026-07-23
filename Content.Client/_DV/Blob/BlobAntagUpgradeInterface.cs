@@ -1,6 +1,7 @@
 using Content.Client.UserInterface.Controls;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
+using Robust.Shared.Utility;
 
 namespace Content.Client._DV.Blob;
 
@@ -19,48 +20,45 @@ public sealed class BlobAntagUpgradeInterface : BoundUserInterface
 
     protected override void Open()
     {
-        var ev = new GetBlobUpgradesEvent();
-        EntMan.EventBus.RaiseLocalEvent(Owner, ref ev);
-
         base.Open();
+
+        var ev = new GetBlobUpgradesEvent(Owner);
+        EntMan.EventBus.RaiseLocalEvent(Owner, ref ev);
 
         _menu = this.CreateWindow<SimpleRadialMenu>();
         _menu.Track(Owner);
+
         var models = ConvertToButtons(ev.Upgrades);
-        _menu.SetButtons(models);
+        _menu!.SetButtons(models);
 
         _menu.OpenOverMouseScreenPosition();
     }
 
-    private IEnumerable<RadialMenuOptionBase> ConvertToButtons(Dictionary<string, IReadOnlyList<BlobUpgradeRadial>> allUpgrades)
+    private IEnumerable<RadialMenuOptionBase> ConvertToButtons(IReadOnlyList<BlobUpgradeRadial> allowedUpgrades)
     {
-        var models = new RadialMenuOptionBase[allUpgrades.Keys.Count];
-        foreach (var (type, upgrades) in allUpgrades)
+        var groupedUpgrades = new Dictionary<string, List<RadialMenuOptionBase>>();
+
+        foreach (var upgrade in allowedUpgrades)
         {
-            var upgradesInType = new RadialMenuActionOptionBase[upgrades.Count];
-            for (var i = 0; i < upgrades.Count; i++)
+            var groupModels = groupedUpgrades.GetOrNew(upgrade.Category);
+            groupModels!.Add(new RadialMenuActionOption<BaseBlobUpgrade>(HandleRadialMenuClick, new BaseBlobUpgrade())
             {
-                var upgrade = upgrades[i];
-                upgradesInType[i] = new RadialMenuActionOption<BaseBlobUpgrade>(HandleRadialMenuClick, new BaseBlobUpgrade())
-                {
-                    IconSpecifier = RadialMenuIconSpecifier.With(upgrade.Sprite),
-                    ToolTip = upgrade.Tooltip
-                };
-            }
+                IconSpecifier = RadialMenuIconSpecifier.With(upgrade.Sprite),
+                ToolTip = upgrade.Tooltip
+            });
+        }
 
-            for (var i = 0; i < allUpgrades.Keys.Count; i++)
+        var models = new List<RadialMenuOptionBase>();
+        foreach (var (category, upgrades) in groupedUpgrades)
+        {
+            models.Add(new RadialMenuNestedLayerOption(upgrades)
             {
-                models[i] = new RadialMenuNestedLayerOption(upgradesInType)
-                {
-                    ToolTip = "What?"
-                };
-            }
-
+                ToolTip = category
+            });
         }
 
         return models;
     }
-
 
     private void HandleRadialMenuClick(BaseBlobUpgrade p)
     {

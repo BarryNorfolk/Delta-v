@@ -24,7 +24,7 @@
   description: Upgrade a node in your network
   components:
   - type: Action
-    useDelay: 30
+    useDelay: 0
     itemIconStyle: NoItem
     icon:
       sprite: _DV/CosmicCult/Icons/cosmiccult_abilities.rsi # TODO(Barry): Icons
@@ -38,6 +38,4 @@
     whitelist:
       components:
       - BlobAntagNode
-  - type: ActionCost
-    cost: 10
 

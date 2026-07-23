@@ -27,8 +27,11 @@ public abstract class SharedBlobAntagSystem : EntitySystem
     [Dependency] protected readonly EntityLookupSystem Lookup = default!;
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedUserInterfaceSystem _bui = default!;
+    [Dependency] protected readonly IPrototypeManager PrototypeManager = default!;
 
     private readonly EntProtoId _blobNode = "BlobAntagNode";
+
+    protected HashSet<ProtoId<BlobAntagUpgradePrototype>> AvailableUpgrades = new();
 
     // Frustrating that this is not available easily, we only have ALL directions.
     protected readonly Direction[] CardinalDirections = [
@@ -44,6 +47,13 @@ public abstract class SharedBlobAntagSystem : EntitySystem
 
         SubscribeLocalEvent<BlobAntagComponent, EventBlobCreateNode>(OnCreateNode);
         SubscribeLocalEvent<BlobAntagComponent, EventBlobUpgradeNode>(OnUpgradeAction);
+
+        foreach (var prototype in PrototypeManager.EnumeratePrototypes<BlobAntagUpgradePrototype>())
+        {
+            // TODO(Barry): Does it even make sense to cache these here?
+            //              Is the enumeration here costly enough that we need to?
+            AvailableUpgrades.Add(prototype.ID);
+        }
     }
 
     protected void AddEnergy(Entity<BlobAntagComponent> blob, int amount)
@@ -95,7 +105,7 @@ public abstract class SharedBlobAntagSystem : EntitySystem
             return;
         args.Handled = true;
 
-        _bui.TryToggleUi(blob.Owner, BlobAntagUiKey.Key, actor.PlayerSession);
+        _bui.TryToggleUi(args.Target, BlobAntagUiKey.Key, actor.PlayerSession);
     }
     private bool TrySpawnNode(Entity<BlobAntagComponent> blob, EntityCoordinates coords)
     {

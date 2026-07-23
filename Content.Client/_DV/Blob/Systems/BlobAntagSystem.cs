@@ -1,23 +1,37 @@
 using Content.Shared._DV.Blob.Components;
 using Content.Shared._DV.Blob.Systems;
+using Content.Shared.Whitelist;
 using Robust.Shared.Utility;
 
 namespace Content.Client._DV.Blob.Systems;
 
 public sealed class BlobAntagSystem : SharedBlobAntagSystem
 {
+    [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
+
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<BlobAntagComponent, GetBlobUpgradesEvent>(OnGetBlobUpgrades);
+        SubscribeLocalEvent<BlobAntagNodeComponent, GetBlobUpgradesEvent>(OnGetBlobUpgrades);
     }
 
-    private void OnGetBlobUpgrades(Entity<BlobAntagComponent> blob, ref GetBlobUpgradesEvent args)
+    private void OnGetBlobUpgrades(Entity<BlobAntagNodeComponent> blob, ref GetBlobUpgradesEvent args)
     {
-        args.Upgrades.Add("Economy", new List<BlobUpgradeRadial>()
+        foreach (var upgrade in AvailableUpgrades)
         {
-            new BlobUpgradeRadial { Tooltip = "Resource Node", Sprite = new SpriteSpecifier.Texture(new ResPath(""))}
-        });
+            var proto = PrototypeManager.Index(upgrade);
+            if (_entityWhitelist.IsWhitelistFailOrNull(proto.AllowedFrom, args.Target))
+                continue;
+
+            args.Upgrades.Add(
+                new BlobUpgradeRadial
+                (
+                    proto.Category,
+                    proto.Tooltip,
+                    proto.Sprite
+                )
+            );
+        }
     }
 }

@@ -6,6 +6,10 @@
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
   - type: BlobAntagNode
+  - type: UserInterface
+    interfaces:
+      enum.BlobAntagUiKey.Key:
+        type: BlobAntagUpgradeInterface
   - type: Sprite
     sprite: _DV/Mobs/Blob/blob.rsi
     layers:
@@ -66,6 +70,8 @@
   description: A part of the blob, it looks eerily comfy...
   parent: BlobAntagNodeBase
   categories: [ DoNotMap ]
+  components:
+  - type: BlobAntagSimpleNode
 
 # A node on the network that generates resources
 - type: entity
@@ -105,10 +111,6 @@
   - type: StartingMindRole
     mindRole: "MindRoleBlobAntag"
     silent: true
-  - type: UserInterface
-    interfaces:
-      enum.BlobAntagUiKey.Key:
-        type: BlobAntagUpgradeInterface
 
 # Projection that the overmind can use to move around with
 - type: entity
