@@ -1,0 +1,10 @@
+- type: antag
+  id: BlobAntag
+  name: roles-antag-blob-name
+  antagonist: true
+  setPreference: true
+  objective: roles-antag-blob-description
+  requirements:
+  - !type:OverallPlaytimeRequirement
+    time: 24h
+  guides: [ CosmicCult ] # TODO(Barry): Make a guide

@@ -262,6 +262,21 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", ntAgent, Loc.GetString("admin-verb-text-make-NTAgent")),
         };
         args.Verbs.Add(agent);
+
+        var blobName = Loc.GetString("admin-verb-make-Blob");
+        Verb blob = new()
+        {
+            Text = blobName,
+            Category = VerbCategory.Antag,
+            Icon = new SpriteSpecifier.Rsi(new ResPath("/Textures/Interface/Misc/job_icons.rsi"), "Nanotrasen"), // TODO(Barry): Make a job icon
+            Act = () =>
+            {
+                _antag.ForceMakeAntag<BlobAntagRuleComponent>(targetPlayer, "BlobAntagRule");
+            },
+            Impact = LogImpact.High,
+            Message = string.Join(": ", blobName, Loc.GetString("admin-verb-text-make-Blob")),
+        };
+        args.Verbs.Add(blob);
         // End DeltaV Additions
         // start DeltaV Additions - add hitman
         var hitmanName = Loc.GetString("admin-verb-make-hitman");

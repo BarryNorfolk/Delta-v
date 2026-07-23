@@ -1,0 +1,24 @@
+- type: entity
+  parent: BaseGameRule
+  id: BlobAntagRule
+  components:
+  - type: BlobAntagRule
+  - type: GameRule
+    minPlayers: 15
+    minTotalPlayers: 40
+    delay:
+      min: 60
+      max: 120
+  - type: AntagObjectives
+    objectives:
+    - BlobObjective
+  - type: AntagSelection
+    definitions:
+    - prefRoles: [ BlobAntag ]
+      min: 2
+      max: 6
+      playerRatio: 10
+      components:
+      - type: BlobAntag
+      mindRoles:
+      - MindRoleBlobAntag

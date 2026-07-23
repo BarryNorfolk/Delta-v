@@ -1,0 +1,26 @@
+- type: entity
+  abstract: true
+  parent: BaseObjective
+  id: BaseBlobObjective
+  components:
+  - type: Objective
+    issuer: objective-issuer-blob
+    difficulty: 0 # uses own system for assignment
+  - type: RoleRequirement
+    roles:
+    - BlobAntagRole
+  - type: NoCompletionObjective
+
+- type: entity
+  parent: BaseBlobObjective
+  id: BlobObjective
+  components:
+  - type: Objective
+    icon:
+      sprite: _DV/CosmicCult/Icons/objectives.rsi # TODO(Barry): An icon
+      state: upgrade
+  - type: NumberObjective
+    min: 3
+    max: 3
+    title: objective-condition-blob-title
+    description: objective-condition-blob-desc
