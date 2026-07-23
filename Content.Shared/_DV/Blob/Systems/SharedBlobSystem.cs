@@ -173,7 +173,7 @@ public abstract class SharedBlobSystem : EntitySystem
         return true;
     }
 
-    public virtual void PulseNetwork(Entity<BlobComponent> blob)
+    protected virtual void PulseNetwork(Entity<BlobComponent> blob)
     {
         // TODO (Barry): Make this just a pure virtual if there's nothing to be done on the client
         // side. We probably want to predict some visuals for the pulse though.

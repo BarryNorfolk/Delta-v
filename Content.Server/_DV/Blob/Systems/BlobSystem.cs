@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Server.Actions;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Shared._DV.Blob;
@@ -40,13 +41,17 @@ public sealed class BlobSystem : SharedBlobSystem
         AddEnergy((args.Core, comp), producer.Comp.EnergyPerPulse);
     }
 
-    public override void PulseNetwork(Entity<BlobComponent> blob)
+    protected override void PulseNetwork(Entity<BlobComponent> blob)
     {
         base.PulseNetwork(blob);
 
         if (!_nodeContainer.TryGetNode<BlobNode>(
             EntityManager.GetComponent<NodeContainerComponent>(blob), _blobNodeID, out var coreNode))
             return;
+
+        var coreNodeGroup = coreNode.NodeGroup;
+        if (coreNodeGroup == null)
+            return; // Core is alone and cannot pulse anything
 
         // TODO(Barry): Store this query so it's re-used
         var query = EntityQueryEnumerator<BlobPulseReceiverComponent>();
@@ -57,7 +62,7 @@ public sealed class BlobSystem : SharedBlobSystem
                 continue; // Not a part of ANY node network?
 
             // TODO (Barry): Make sure that this node is actually connected and reachable
-            if (coreNode.NodeGroupID != node.NodeGroupID)
+            if (!coreNodeGroup.Nodes.Any(x => x.Owner == node.Owner))
                 continue; // Not on the same group as the core, or not reachable FROM the core
 
             var pulseEvent = new BlobNetworkPulseEvent(blob);
